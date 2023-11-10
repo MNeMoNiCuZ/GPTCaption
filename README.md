@@ -2,13 +2,15 @@
 A captioning tool using ChatGPT (API) to describe images.
 
 # Usage
-1. Run main_gui.py
+1. Add your OpenAI API-key in the settings.ini-file.
 
-2. Paste a bunch of URLs to images you wish to caption, one per line. Supports JPG, JPEG, PNG.
+2. Run main_gui.py.
 
-3. Optional: Edit the image analysis prompt.
+3. Paste a bunch of URLs to images you wish to caption, one per line. Supports JPG, JPEG, PNG.
 
-4. Press Generate Captions
+4. Optional: Edit the image analysis prompt.
+
+5. Press Generate Captions
 
 It will make a rough estimate of the API call costs and ask if you want to continue.
 

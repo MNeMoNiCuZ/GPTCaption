@@ -28,9 +28,9 @@ def get_openai_client():
     client = OpenAI(api_key=api_key)
     return client
 
-def analyze_image(image_url):
+def analyze_image(image_url, instruction_text):
     client = get_openai_client()
-    print(f"Sending API request for image: {image_url}")  # Status message for API request
+    print(f"Sending API request for image: {image_url} with the instruction: {instruction_text}") 
     try:
         response = client.chat.completions.create(
             model="gpt-4-vision-preview",
@@ -38,12 +38,10 @@ def analyze_image(image_url):
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "What’s in this image?"},
+                        {"type": "text", "text": instruction_text},
                         {
                             "type": "image_url",
-                            "image_url": {
-                                "url": image_url,
-                            },
+                            "image_url": {"url": image_url},
                         },
                     ],
                 }
@@ -58,6 +56,7 @@ def analyze_image(image_url):
         print(f"An error occurred: {e}")
         return "An error occurred while analyzing the image."
 
+
 def write_to_file(description, filename, folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -66,10 +65,10 @@ def write_to_file(description, filename, folder_path):
     with open(file_path, 'w') as file:
         file.write(description)
 
-def process_images(image_urls, folder_path):
+def process_images(image_urls, instruction_text, folder_path):
     for image_url in image_urls:
         filename = os.path.basename(image_url).split('.')[0]
-        description = analyze_image(image_url)
+        description = analyze_image(image_url, instruction_text)
         write_to_file(description, filename, folder_path)
 
 # GUI setup
@@ -90,12 +89,12 @@ instructions_label.pack(fill='x')
 
 instructions_entry = scrolledtext.ScrolledText(root, height=4)
 instructions_entry.pack(fill='both', expand=True)
-instructions_entry.insert(tk.END, "What's in this image?")
+instructions_entry.insert(tk.END, "Please return a comma-separated keyword list describing the contents of this image.")
 
 def generate_captions():
     raw_urls = url_text_area.get("1.0", tk.END)
     image_urls = extract_image_urls(raw_urls)
-    instruction_text = instructions_entry.get("1.0", "end-1c").strip()  # Retrieve the instruction text
+    instruction_text = instructions_entry.get("1.0", "end-1c").strip()
 
     if not image_urls:
         messagebox.showerror("Error", "No valid image URLs found. Please check the input.")
@@ -120,20 +119,20 @@ def generate_captions():
         output_folder = os.path.join('captions', date_folder, time_folder)
 
         # Create and start a new thread for the process_images function
-        threading.Thread(target=threaded_process_images, args=(image_urls, output_folder), daemon=True).start()
+        threading.Thread(target=threaded_process_images, args=(image_urls, instruction_text, output_folder), daemon=True).start()
     else:
         messagebox.showinfo("Cancelled", "Image captioning was not processed.")
 
-def threaded_process_images(image_urls, output_folder):
+def threaded_process_images(image_urls, instruction_text, output_folder):
+    process_images(image_urls, instruction_text, output_folder)
     all_descriptions = []  # List to hold all descriptions
-    global time_folder  # Use the global time_folder variable
 
     # Process each image and collect descriptions
     for image_url in image_urls:
         filename = os.path.basename(image_url).split('.')[0]
-        description = analyze_image(image_url)
+        description = analyze_image(image_url, instruction_text)
         write_to_file(description, filename, output_folder)
-        all_descriptions.append(f"Image: {image_url}\nCaption: {description}\n\n")  # Add image URL and description to list
+        all_descriptions.append(f"Image: {image_url}\nCaption: {description}\n\n")
 
     # Write all descriptions to a single file in the date folder
     combined_filename = f"{output_folder}{os.path.sep}{time_folder}.txt"  # Construct combined filename

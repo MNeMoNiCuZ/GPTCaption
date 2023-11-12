@@ -1,0 +1,5 @@
+What's in this image?
+
+Describe this image for a dataset image captioning purpose to train an image generation model.
+
+Please return a comma-separated keyword list describing the contents of this image.

@@ -2,7 +2,9 @@
 A captioning tool using ChatGPT (API) to describe images.
 
 # Example Captioning Results
-![CaptionCompare](https://github.com/MNeMoNiCuZ/GPTCaption/assets/60541708/1aa9d4f6-36d6-4c60-b52a-99fbc1cbe0fd)
+![image](https://github.com/MNeMoNiCuZ/GPTCaption/assets/60541708/623d9320-7210-43d5-aa69-3f81b05ff575)
+
+
 
 
 # Usage

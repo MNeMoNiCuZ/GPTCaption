@@ -1,6 +1,10 @@
 # GPTCaption
 A captioning tool using ChatGPT (API) to describe images.
 
+# Example Captioning Results
+![CaptionCompare](https://github.com/MNeMoNiCuZ/GPTCaption/assets/60541708/1aa9d4f6-36d6-4c60-b52a-99fbc1cbe0fd)
+
+
 # Usage
 1. Add your OpenAI API-key in the settings.ini-file.
 

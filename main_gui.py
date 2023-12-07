@@ -7,6 +7,7 @@ import os
 import datetime
 from openai import OpenAI
 import threading
+import urllib.parse
 
 # Define the get_credentials function in your script
 def get_credentials():
@@ -67,7 +68,9 @@ def write_to_file(description, filename, folder_path):
 
 def process_images(image_urls, instruction_text, folder_path):
     for image_url in image_urls:
-        filename = os.path.basename(image_url).split('.')[0]
+        filename = os.path.basename(image_url)
+        filename = urllib.parse.unquote(filename)  # Decode URL-encoded characters
+        filename = os.path.splitext(filename)[0]  # Retain the full filename without extension
         description = analyze_image(image_url, instruction_text)
         write_to_file(description, filename, folder_path)
 
@@ -129,13 +132,15 @@ def threaded_process_images(image_urls, instruction_text, output_folder):
 
     # Process each image and collect descriptions
     for image_url in image_urls:
-        filename = os.path.basename(image_url).split('.')[0]
+        filename = os.path.basename(image_url)
+        filename = urllib.parse.unquote(filename)  # Decode URL-encoded characters
+        filename = os.path.splitext(filename)[0]  # Retain the full filename without extension
         description = analyze_image(image_url, instruction_text)
         write_to_file(description, filename, output_folder)
         all_descriptions.append(f"Image: {image_url}\nCaption: {description}\n\n")
 
     # Write all descriptions to a single file in the date folder
-    combined_filename = f"{output_folder}{os.path.sep}{time_folder}.txt"  # Construct combined filename
+    combined_filename = f"{output_folder}{os.path.sep}{time_folder}.log"  # Construct combined filename
     with open(combined_filename, 'w') as combined_file:
         combined_file.write("\n".join(all_descriptions))  # Write all descriptions to the file
 

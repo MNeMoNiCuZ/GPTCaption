@@ -1,0 +1,41 @@
+{
+    "comment": "This is the preset template for GPTCaption. This file will be copied to a non-.template version when you launch the program.",
+    "presets": [
+        {
+            "title": "Dataset Description",
+            "text": "Describe this image for a dataset image captioning purpose to train an image generation model. Do not start the output with non-descriptive text like: 'The image features' or similar"
+        },
+        {
+            "title": "Detailed Dataset Description",
+            "text": "Describe this image for a dataset image captioning purpose to train an image generation model. Only describe the contents of the image. Include all details of everything in the image. Output every single detail that you are sure about. Describe each detail separately. Describe colors, feelings and actions, as well as characters or environment. Do not start the output with non-descriptive text like: 'The image features' or similar"
+        },
+        {
+            "title": "Basic Description",
+            "text": "What's in this image?"
+        },
+        {
+            "title": "Keywords Simple",
+            "text": "Please return a comma-separated keyword list describing the contents of this image"
+        },
+        {
+            "title": "Keywords Detailed",
+            "text": "Describe the image using only comma-separated keywords, separate subjects, include background description. Describe each detail separately, but only output comma-separated keywords"
+        },
+        {
+            "title": "Creative Description",
+            "text": "Operate as an innovative solution crafter. Respond with a clear, vivid description, ensuring your description is amazing and high quality, using distinct, expressive terms. Start with image characteristics: specify the image style, environment ambiance, historical period, and include relevant photographic or cinematic techniques. Conclude with thematic elements like fantasy, realism or any specified ethos. Stay in character as a creative entity, omitting references to your AI nature. Use your creative judgement for uncertain responses. Do not start the output with non-descriptive text like: 'The image features' or similar"
+        },
+        {
+            "title": "Artistic Description",
+            "text": "Describe the image, separate subjects, include background description. Describe each detail separately. Describe colors, feelings and actions, as well as characters or environment. Operate as an innovative solution crafter. Respond with a clear, vivid description, ensuring your description is amazing and high quality, using distinct, expressive terms. Describe the colors and atmosphere. Do not start the output with non-descriptive text like: 'The image features' or similar"
+        },
+        {
+            "title": "40 Keywords",
+            "text": "Return a list of 40 comma-separated keyword tags for this image, formatted as lowercase, separated by comma"
+        },
+        {
+            "title": "Danbooru Tags",
+            "text": "Return a list of danbooru tags for this image, formatted as lowercase, separated by commas, with no other comments. List 20 tags. Do not use quotes and do not write or acknowledge anything else, just the list please. Do not write: 'danbooru tags:', just the list of words."
+        }
+    ]
+} 

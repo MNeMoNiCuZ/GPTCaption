@@ -1,157 +1,101 @@
 {
-    "ui": {
-        "window": {
-            "title": "Image Caption with ChatGPT API"
-        },
-        "web_urls": {
-            "frame_title": "Web URLs",
-            "placeholder": "Enter URLs of images to process (one per line)"
-        },
-        "local_files": {
-            "frame_title": "Local Files",
-            "placeholder": "Browse, paste in absolute paths, or drag & drop local image file(s) here. One per line.",
-            "browse_button": "Browse Files",
-            "clear_button": "Clear Local Files",
-            "dialog_title": "Select Image Files",
-            "file_types": {
-                "images": "Image Files",
-                "all": "All Files"
-            }
-        },
-        "options": {
-            "frame_title": "Processing Options",
-            "save_individual": {
-                "text": "Save Individual Captions",
-                "tooltip": "Save each caption as a separate text file"
-            },
-            "save_local": {
-                "text": "Save Local Files In-Place",
-                "tooltip": "Save caption files next to the original local images"
-            },
-            "overwrite": {
-                "text": "Overwrite Existing Files",
-                "tooltip": "Overwrite existing caption files when saving in-place. If disabled, existing files will be skipped."
-            },
-            "resolution": {
-                "label": "Max Resolution:",
-                "tooltip": "Maximum resolution for the longest edge of images"
-            },
-            "batch": {
-                "text": "Enable Batch Processing",
-                "tooltip": "Process multiple images simultaneously for faster completion (same API usage)"
-            },
-            "tier": {
-                "label": "API Tier:"
-            }
-        },
-        "instructions": {
-            "frame_title": "Instructions",
-            "prompt_default": "Select a prompt template..."
-        },
-        "generate": {
-            "button_text": "Generate Captions",
-            "processing_text": "Processing..."
-        },
-        "status": {
-            "progress": "Processed {current} of {total} images ({percent}%)"
-        }
-    },
-    "messages": {
-        "validation": {
-            "no_images": "No images found. Please add web URLs or local files.",
-            "no_valid_images": "No valid images to process.",
-            "summary": "Total files attempted: {total}\nFiles to be processed: {to_process}",
-            "skipped": "\nFiles to be skipped (already exist): {count}",
-            "not_found": "\nFiles not found: {count}"
-        },
-        "processing": {
-            "start": "Starting the caption generation process for {count} images.",
-            "status": {
-                "processing": "Processing image: {file}",
-                "completed": "Completed: {file}",
-                "error": "Error processing {file}: {error}"
-            },
-            "complete": "Processing complete!",
-            "cancelled": "Image captioning was not processed."
-        },
-        "errors": {
-            "api_error": "API returned error in response: {message}",
-            "processing_error": "Error processing {file}:\n  {error}",
-            "abort": "Aborting after {count} consecutive errors",
-            "load_presets": "Error loading presets: {error}",
-            "group": {
-                "header": "\nFailed files ({count}):\n",
-                "error_header": "\nError: {error}\n",
-                "files_header": "Files:\n",
-                "file_prefix": " - ",
-                "more_files": "\n - ... and {count} more files"
-            },
-            "image_processing": {
-                "failed_to_open": "Failed to open image: {error}",
-                "failed_to_process": "Failed to process image: {error}",
-                "invalid_format": "Invalid image format"
-            },
-            "responses": {
-                "patterns": [
-                    "I'm sorry",
-                    "Im sorry",
-                    "I apologize",
-                    "I'm unable to",
-                    "An error occurred while analyzing the image",
-                    "I can't help"
-                ]
-            }
-        },
-        "console": {
-            "validation": {
-                "header": "\nValidation Results:",
-                "total": "Total files attempted: {total}",
-                "to_process": "Files to be processed: {count}",
-                "skipped_header": "\nFiles to be skipped (already exist):",
-                "not_found_header": "\nFiles not found:",
-                "file_prefix": "  "
-            },
-            "token_usage": {
-                "header": "\nToken Usage Summary:",
-                "input": "Input tokens: {count}",
-                "output": "Output tokens: {count}",
-                "total": "Total tokens: {count}",
-                "cost": {
-                    "header": "\nCost Breakdown:",
-                    "input": "Input cost:  ${cost:.4f}",
-                    "output": "Output cost: ${cost:.4f}",
-                    "total": "Total cost:  ${cost:.4f}"
-                }
-            },
-            "errors": {
-                "header": "\nFailed Files Summary:",
-                "total": "Total failed files: {count}",
-                "details_header": "\nDetailed failures:",
-                "file_prefix": "  ",
-                "error_prefix": "    Error: "
-            },
-            "presets": {
-                "created": "Created {file} from template",
-                "warning": "Warning: No presets found or presets file is empty"
-            }
-        },
-        "dialogs": {
-            "validation": {
-                "title": "Validation and Cost Estimate",
-                "message": "{validation}\n\nThe estimated cost for analyzing {count} images is ${cost:.2f}.\n\nDo you want to continue?"
-            },
-            "results": {
-                "title": "Processing Results",
-                "message": "Processing complete!\n\nTotal files processed: {processed}\n\nToken Usage:\nInput tokens: {input}\nOutput tokens: {output}\nTotal tokens: {total}\n\nCost Breakdown:\nInput cost: {input_cost}\nOutput cost: {output_cost}\nTotal cost: {total_cost}"
-            },
-            "error": {
-                "title": "Error",
-                "message": "Error during processing: {error}\n\nTotal files processed: {processed}\n\nToken Usage:\nInput tokens: {input}\nOutput tokens: {output}\nTotal tokens: {total}\n\nCost Breakdown:\nInput cost: {input_cost}\nOutput cost: {output_cost}\nTotal cost: {total_cost}"
-            },
-            "cancelled": {
-                "title": "Cancelled",
-                "message": "Image captioning was not processed."
-            }
-        }
-    }
+    "ui.window.title": "GPTCaption",
+    
+    "ui.web_urls.frame_title": "Web URLs",
+    "ui.web_urls.placeholder": "Enter URLs (one per line)",
+    
+    "ui.local_files.frame_title": "Local Files",
+    "ui.local_files.placeholder": "Drag & drop files here or use Browse button",
+    "ui.local_files.dialog_title": "Select Images",
+    "ui.local_files.file_types.images": "Image Files",
+    "ui.local_files.file_types.all": "All Files",
+    "ui.local_files.browse_button": "Browse",
+    "ui.local_files.clear_button": "Clear",
+    
+    "ui.options.frame_title": "Options",
+    "ui.options.save_individual.text": "Save Individual Captions",
+    "ui.options.save_individual.tooltip": "When checked, saves one caption file per image. When unchecked, saves all captions in a single file.",
+    "ui.options.save_local.text": "Save Next to Images",
+    "ui.options.save_local.tooltip": "When checked, saves caption files in the same directory as the images. When unchecked, saves in a dated folder.",
+    "ui.options.overwrite.text": "Overwrite Existing",
+    "ui.options.overwrite.tooltip": "When checked, overwrites existing caption files. When unchecked, skips images that already have captions.",
+    "ui.options.batch.text": "Batch Processing",
+    "ui.options.batch.tooltip": "When checked, processes images in batches to reduce memory usage. May be slower but more stable for large sets.",
+    "ui.options.resolution.label": "Max Resolution:",
+    "ui.options.resolution.tooltip": "Maximum resolution for the longest edge of local images. Web URLs are processed at their original resolution.",
+    "ui.options.tier.label": "API Tier:",
+    "ui.options.tier.tooltip": "Your API tier determines rate limits for requests per minute (RPM) and tokens per minute (TPM).",
+    
+    "ui.instructions.frame_title": "Language Model Prompt",
+    "ui.instructions.prompt_default": "Choose from the prompt presets or enter your own custom prompt below",
+    
+    "ui.generate.button_text": "Generate Captions",
+    "ui.generate.processing_text": "Processing...",
+    
+    "ui.status.progress": "Processed {current} of {total} images ({percent}%)",
+    
+    "messages.validation.no_images": "No images selected. Please select at least one image to process.",
+    "messages.validation.no_valid_images": "No valid images found in the selection. Please ensure all selected files are valid images.",
+    "messages.validation.summary": "Total files attempted: {total}\nFiles to be processed: {to_process}",
+    "messages.validation.skipped": "\nFiles to be skipped (already exist): {count}",
+    "messages.validation.not_found": "\nFiles not found: {count}",
+    
+    "messages.processing.start": "Starting the caption generation process for {count} images.",
+    "messages.processing.status.processing": "Processing image: {file}",
+    "messages.processing.status.completed": "Completed: {file}",
+    "messages.processing.status.error": "Error processing {file}: {error}",
+    "messages.processing.complete": "Processing complete!",
+    "messages.processing.cancelled": "Image captioning was not processed.",
+    
+    "messages.errors.api_error": "API returned error in response: {message}",
+    "messages.errors.processing_error": "Error processing {file}:\n  {error}",
+    "messages.errors.abort": "Aborting after {count} consecutive errors",
+    "messages.errors.load_presets": "Error loading presets: {error}",
+    "messages.errors.image_processing.failed_to_process": "Failed to process image: {error}",
+    "messages.errors.responses.patterns": [
+        "I'm sorry",
+        "Im sorry",
+        "I apologize",
+        "I'm unable to",
+        "An error occurred while analyzing the image",
+        "I can't help"
+    ],
+    "messages.errors.group.header": "\nFailed files ({count}):\n",
+    "messages.errors.group.error_header": "\nError: {error}\n",
+    "messages.errors.group.files_header": "Files:\n",
+    "messages.errors.group.file_prefix": " - ",
+    "messages.errors.group.more_files": "\n - ... and {count} more files",
+    
+    "messages.console.validation.header": "\nValidation Results:",
+    "messages.console.validation.total": "Total files attempted: {total}",
+    "messages.console.validation.to_process": "Files to be processed: {count}",
+    "messages.console.validation.skipped_header": "\nFiles to be skipped (already exist):",
+    "messages.console.validation.not_found_header": "\nFiles not found:",
+    "messages.console.validation.file_prefix": "  ",
+    
+    "messages.console.token_usage.header": "\nToken Usage Summary:",
+    "messages.console.token_usage.input": "Input Tokens: {count}",
+    "messages.console.token_usage.output": "Output Tokens: {count}",
+    "messages.console.token_usage.total": "Total Tokens: {count}",
+    "messages.console.token_usage.cost.header": "\nCost Summary:",
+    "messages.console.token_usage.cost.input": "Input Cost: ${cost}",
+    "messages.console.token_usage.cost.output": "Output Cost: ${cost}",
+    "messages.console.token_usage.cost.total": "Total Cost: ${cost}",
+    
+    "messages.console.errors.header": "\nFailed Files Summary:",
+    "messages.console.errors.total": "Total failed files: {count}",
+    "messages.console.errors.details_header": "\nDetailed failures:",
+    "messages.console.errors.file_prefix": "  ",
+    "messages.console.errors.error_prefix": "    Error: ",
+    
+    "messages.console.presets.created": "Created {file} from template",
+    "messages.console.presets.warning": "Warning: Custom presets not found or invalid. Using defaults.",
+    
+    "messages.dialogs.error.title": "Error",
+    "messages.dialogs.validation.title": "Validation and Cost Estimate",
+    "messages.dialogs.validation.message": "{validation}\n\nThe estimated cost for analyzing {count} images is ${cost}.\n\nDo you want to continue?",
+    "messages.dialogs.results.title": "Processing Complete",
+    "messages.dialogs.results.message": "Processed {processed} images\n\nToken Usage:\nInput: {input}\nOutput: {output}\nTotal: {total}\n\nCost:\nInput: {input_cost}\nOutput: {output_cost}\nTotal: {total_cost}",
+    "messages.dialogs.cancelled.title": "Cancelled",
+    "messages.dialogs.cancelled.message": "Image captioning was not processed."
 } 

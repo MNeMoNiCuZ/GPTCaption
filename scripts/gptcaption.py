@@ -98,10 +98,19 @@ class CreateToolTip(object):
         x += self.widget.winfo_rootx() + 25
         y += self.widget.winfo_rooty() + 20
         
+        # Create tooltip window
         self.tw = tk.Toplevel(self.widget)
         self.tw.wm_overrideredirect(True)
+        
+        # Window management settings
+        self.tw.wm_attributes("-topmost", True)  # Keep on top
+        self.tw.wm_attributes("-toolwindow", True)  # Mark as tool window
+        self.tw.wm_transient(self.widget)  # Set as transient window
+        
+        # Position the tooltip
         self.tw.wm_geometry(f"+{x}+{y}")
         
+        # Create tooltip content
         label = ttk.Label(self.tw, text=self.text, justify='left',
                          background='#ffffe0', relief='solid', borderwidth=1)
         label.pack(ipadx=1)
@@ -335,6 +344,16 @@ def analyze_image(image_url, instruction_text, status_callback=None):
 
 def write_to_file(description, filename, folder_path, original_path=None):
     """Write caption to file, either in the dated folder or next to the original file."""
+    if not save_individual_var.get():
+        # When individual captions are disabled, append to a consolidated file
+        consolidated_path = os.path.join(folder_path, 'captions.txt')
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        with open(consolidated_path, 'a', encoding='utf-8') as file:
+            file.write(f"=== {filename} ===\n{description}\n\n")
+        return
+
+    # Individual caption files
     if original_path and save_local_var.get() and os.path.exists(original_path):
         # Save next to original file
         file_dir = os.path.dirname(original_path)
@@ -452,15 +471,20 @@ def process_images(image_urls, instruction_text, folder_path, batch_mode=False, 
         output_cost = total_completion_tokens * TOKEN_COST_OUTPUT
         total_cost = input_cost + output_cost
         
+        # Format costs before string formatting
+        input_cost_str = "{:.4f}".format(input_cost)
+        output_cost_str = "{:.4f}".format(output_cost)
+        total_cost_str = "{:.4f}".format(total_cost)
+        
         # Print token usage and cost summary to console
         print(strings.get('messages.console.token_usage.header'))
         print(strings.get('messages.console.token_usage.input', count=total_prompt_tokens))
         print(strings.get('messages.console.token_usage.output', count=total_completion_tokens))
         print(strings.get('messages.console.token_usage.total', count=total_tokens))
         print(strings.get('messages.console.token_usage.cost.header'))
-        print(strings.get('messages.console.token_usage.cost.input', cost=input_cost))
-        print(strings.get('messages.console.token_usage.cost.output', cost=output_cost))
-        print(strings.get('messages.console.token_usage.cost.total', cost=total_cost))
+        print(strings.get('messages.console.token_usage.cost.input', cost=input_cost_str))
+        print(strings.get('messages.console.token_usage.cost.output', cost=output_cost_str))
+        print(strings.get('messages.console.token_usage.cost.total', cost=total_cost_str))
         
         # Print error summary to console
         if failed_files:
@@ -587,13 +611,19 @@ def generate_captions():
     all_images = web_urls + local_files
     
     if not all_images:
-        messagebox.showerror("Error", strings.get('messages.validation.no_images'))
+        messagebox.showerror(
+            strings.get('messages.dialogs.error.title'),
+            strings.get('messages.validation.no_images')
+        )
         return
 
     # Validate images
     validation = validate_images(all_images)
     if not validation['to_process']:
-        messagebox.showerror("Error", strings.get('messages.validation.no_valid_images'))
+        messagebox.showerror(
+            strings.get('messages.dialogs.error.title'),
+            strings.get('messages.validation.no_valid_images')
+        )
         return
         
     # Build validation message
@@ -617,13 +647,16 @@ def generate_captions():
     # Calculate the estimated cost including token-based costs
     cost = estimate_cost(len(validation['to_process']), instruction_text, validation['to_process'])
 
+    # Format the cost string with 4 decimal places instead of 2
+    cost_str = "{:.4f}".format(cost)
+
     # Ask the user if they want to proceed with the estimated cost
     proceed = messagebox.askyesno(
         strings.get('messages.dialogs.validation.title'),
         strings.get('messages.dialogs.validation.message',
             validation=validation_msg,
             count=len(validation['to_process']),
-            cost=cost
+            cost=cost_str
         )
     )
     
@@ -733,7 +766,7 @@ def handle_drop(event):
             files = root.tk.splitlist(files)
         
         # Filter for image files
-        valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
+        valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')
         image_files = [f for f in files if os.path.splitext(f)[1].lower() in valid_extensions]
         
         if image_files:
@@ -764,7 +797,7 @@ def browse_files():
     files = filedialog.askopenfilenames(
         title=strings.get('ui.local_files.dialog_title'),
         filetypes=[
-            (strings.get('ui.local_files.file_types.images'), "*.jpg *.jpeg *.png *.gif *.bmp"),
+            (strings.get('ui.local_files.file_types.images'), "*.jpg *.jpeg *.png *.gif *.bmp *.webp"),
             (strings.get('ui.local_files.file_types.all'), "*.*")
         ]
     )
@@ -841,7 +874,10 @@ right_options.pack(side=tk.RIGHT, fill=tk.X)
 
 # Resolution dropdown
 resolution_var = tk.StringVar(value="1024")
-ttk.Label(right_options, text=strings.get('ui.options.resolution.label')).pack(side=tk.LEFT, padx=(5, 0))
+resolution_label = ttk.Label(right_options, text=strings.get('ui.options.resolution.label'))
+resolution_label.pack(side=tk.LEFT, padx=(5, 0))
+CreateToolTip(resolution_label, strings.get('ui.options.resolution.tooltip'))
+
 resolution_dropdown = ttk.Combobox(
     right_options,
     textvariable=resolution_var,
@@ -868,7 +904,10 @@ batch_checkbox.pack(side=tk.LEFT, padx=5)
 current_tier, tiers = get_rate_limits()
 tier_var = tk.StringVar(value=current_tier)
 
-ttk.Label(right_options, text=strings.get('ui.options.tier.label')).pack(side=tk.LEFT, padx=(10, 0))
+tier_label = ttk.Label(right_options, text=strings.get('ui.options.tier.label'))
+tier_label.pack(side=tk.LEFT, padx=(10, 0))
+CreateToolTip(tier_label, strings.get('ui.options.tier.tooltip'))
+
 tier_dropdown = ttk.Combobox(
     right_options,
     textvariable=tier_var,
@@ -877,6 +916,7 @@ tier_dropdown = ttk.Combobox(
     width=10
 )
 tier_dropdown.pack(side=tk.LEFT, padx=5)
+CreateToolTip(tier_dropdown, strings.get('ui.options.tier.tooltip'))
 
 def update_tier(event=None):
     set_key(os.path.join(SCRIPT_DIR, '.env'), 'CURRENT_TIER', tier_var.get())
@@ -979,15 +1019,20 @@ def threaded_process_images(image_urls, instruction_text, output_folder, batch_m
             output_cost = total_completion_tokens * TOKEN_COST_OUTPUT
             total_cost = input_cost + output_cost
             
+            # Format costs before string formatting
+            input_cost_str = "{:.4f}".format(input_cost)
+            output_cost_str = "{:.4f}".format(output_cost)
+            total_cost_str = "{:.4f}".format(total_cost)
+            
             # Build completion message
             msg = strings.get('messages.dialogs.results.message',
                 processed=processed_images,
                 input=total_prompt_tokens,
                 output=total_completion_tokens,
                 total=total_tokens,
-                input_cost=f"${input_cost:.4f}",
-                output_cost=f"${output_cost:.4f}",
-                total_cost=f"${total_cost:.4f}"
+                input_cost=f"${input_cost_str}",
+                output_cost=f"${output_cost_str}",
+                total_cost=f"${total_cost_str}"
             )
             
             if failed_files:
@@ -1003,9 +1048,8 @@ def threaded_process_images(image_urls, instruction_text, output_folder, batch_m
                 for error, files in error_groups.items():
                     msg += strings.get('messages.errors.group.error_header', error=error)
                     msg += strings.get('messages.errors.group.files_header')
-                    msg += strings.get('messages.errors.group.file_prefix') + (
-                        strings.get('messages.errors.group.file_prefix').join(files[:5])
-                    )
+                    files_str = strings.get('messages.errors.group.file_prefix').join(files[:5])
+                    msg += strings.get('messages.errors.group.file_prefix') + files_str
                     if len(files) > 5:
                         msg += strings.get('messages.errors.group.more_files', count=len(files) - 5)
             
@@ -1028,6 +1072,11 @@ def threaded_process_images(image_urls, instruction_text, output_folder, batch_m
             output_cost = total_completion_tokens * TOKEN_COST_OUTPUT
             total_cost = input_cost + output_cost
             
+            # Format costs before string formatting
+            input_cost_str = "{:.4f}".format(input_cost)
+            output_cost_str = "{:.4f}".format(output_cost)
+            total_cost_str = "{:.4f}".format(total_cost)
+            
             # Build error message
             msg = strings.get('messages.dialogs.error.message',
                 error=error_msg,
@@ -1035,9 +1084,9 @@ def threaded_process_images(image_urls, instruction_text, output_folder, batch_m
                 input=total_prompt_tokens,
                 output=total_completion_tokens,
                 total=total_tokens,
-                input_cost=f"${input_cost:.4f}",
-                output_cost=f"${output_cost:.4f}",
-                total_cost=f"${total_cost:.4f}"
+                input_cost=f"${input_cost_str}",
+                output_cost=f"${output_cost_str}",
+                total_cost=f"${total_cost_str}"
             )
             
             if failed_files:
@@ -1053,9 +1102,8 @@ def threaded_process_images(image_urls, instruction_text, output_folder, batch_m
                 for error, files in error_groups.items():
                     msg += strings.get('messages.errors.group.error_header', error=error)
                     msg += strings.get('messages.errors.group.files_header')
-                    msg += strings.get('messages.errors.group.file_prefix') + (
-                        strings.get('messages.errors.group.file_prefix').join(files[:5])
-                    )
+                    files_str = strings.get('messages.errors.group.file_prefix').join(files[:5])
+                    msg += strings.get('messages.errors.group.file_prefix') + files_str
                     if len(files) > 5:
                         msg += strings.get('messages.errors.group.more_files', count=len(files) - 5)
             

@@ -29,15 +29,13 @@ class StringManager:
     
     def get(self, key_path: str, **kwargs) -> str:
         """
-        Get a string by its dot-separated path.
+        Get a string by its key path.
         Example: get("ui.window.title")
         Optional format parameters can be provided as kwargs.
         """
         try:
-            # Navigate through the nested dictionary
-            value = self._strings
-            for key in key_path.split('.'):
-                value = value[key]
+            # Get the value directly from the flattened structure
+            value = self._strings[key_path]
             
             # If format parameters are provided, format the string
             if kwargs and isinstance(value, str):
@@ -50,10 +48,7 @@ class StringManager:
     def get_raw(self, key_path: str) -> Optional[Any]:
         """Get the raw value without any formatting."""
         try:
-            value = self._strings
-            for key in key_path.split('.'):
-                value = value[key]
-            return value
+            return self._strings[key_path]
         except (KeyError, AttributeError):
             return None
 
